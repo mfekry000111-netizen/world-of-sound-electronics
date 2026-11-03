@@ -273,8 +273,8 @@
             z-index: 150;
             margin-top: 6px;
             padding: 6px;
-            width: 250px;
-            max-height: 350px;
+            width: 265px;
+            max-height: 380px;
             overflow-y: auto;
         }
         .security-dropdown-menu.active { display: block; }
@@ -612,7 +612,8 @@
                     <i class="fa-solid fa-gear" style="font-size: 1.15rem;"></i>
                 </button>
                 <div id="security-dropdown-menu" class="security-dropdown-menu">
-                    <button onclick="openSettingsStoreModal()"><i class="fa-solid fa-store" style="color:var(--primary);"></i> تغيير بيانات الواجهة والخطوط واللون</button>
+                    <button onclick="openSettingsStoreModal()"><i class="fa-solid fa-store" style="color:var(--primary);"></i> تعديل بيانات الواجهة والختم</button>
+                    <button onclick="openUnitsManagerModal()"><i class="fa-solid fa-boxes-stacked" style="color:#fb8500;"></i> إدارة وحدات الأصناف (إضافة وتعديل)</button>
                     <button onclick="openThemeSelectorModal()"><i class="fa-solid fa-palette" style="color:#7c3aed;"></i> تغيير السيمات والأشكال</button>
                     <button onclick="openInvoiceStyleSelectorModal()"><i class="fa-solid fa-file-invoice" style="color:#0284c7;"></i> اختيار شكل الفاتورة</button>
                     <button onclick="openFinancialPositionModal()"><i class="fa-solid fa-scale-balanced" style="color:#38b000;"></i> قائمة المركز المالي خلال فترة</button>
@@ -679,10 +680,9 @@
                                 <input type="number" id="p-qty" placeholder="0" required>
                             </div>
                             <div class="form-group" style="flex:2;">
-                                <label>نوع الصنف</label>
+                                <label>نوع / وحدة الصنف</label>
                                 <select id="p-unit">
-                                    <option value="قطعة">عدد (قطعة)</option>
-                                    <option value="متر">متر</option>
+                                    <!-- سيتم تعبئتها ديناميكياً -->
                                 </select>
                             </div>
                         </div>
@@ -726,7 +726,7 @@
                         <input type="text" id="inv-client-name" placeholder="اسم العميل الكريم...">
                     </div>
                     <div class="form-group" style="flex:1.5;">
-                        <label>رقم التليفون (اختياري)</label>
+                        <label>رقم التليفون</label>
                         <input type="text" id="inv-client-phone" placeholder="01xxxxxxxxx...">
                     </div>
                 </div>
@@ -917,16 +917,16 @@
 
     </div>
 
-    <!-- نافذة تعديل بيانات الواجهة -->
+    <!-- نافذة تعديل بيانات الواجهة والختم -->
     <div id="settings-store-modal" class="modal">
-        <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-content" style="max-width: 440px;">
             <div class="modal-header">
-                <h3 style="font-size: 1rem; color: var(--primary);"><i class="fa-solid fa-store"></i> تغيير بيانات الواجهة والخطوط واللون</h3>
+                <h3 style="font-size: 1rem; color: var(--primary);"><i class="fa-solid fa-store"></i> تعديل بيانات الواجهة والختم</h3>
                 <button class="close-btn" onclick="closeModal('settings-store-modal')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="form-group">
-                <label>اسم الواجهة / المحل</label>
+                <label>اسم المحل / الواجهة</label>
                 <input type="text" id="set-store-name" placeholder="عالم الصوت والإلكترونيات">
                 <div style="display: flex; gap: 8px; margin-top: 4px;">
                     <input type="color" id="set-store-color" value="#4a7c59" style="width: 50px; height: 32px; padding: 2px; cursor: pointer;" title="لون اسم المحل">
@@ -941,7 +941,7 @@
             </div>
 
             <div class="form-group">
-                <label>اسم المدير / الإدارة</label>
+                <label>اسم الإدارة / المدير</label>
                 <input type="text" id="set-manager-name" placeholder="إدارة أ/ أحمد محمد حامد">
                 <div style="display: flex; gap: 8px; margin-top: 4px;">
                     <input type="color" id="set-manager-color" value="#2f3e46" style="width: 50px; height: 32px; padding: 2px; cursor: pointer;" title="لون المدير">
@@ -956,7 +956,7 @@
             </div>
 
             <div class="form-group">
-                <label>رقم التليفون</label>
+                <label>رقم التليفون بالختم</label>
                 <input type="text" id="set-store-phone" placeholder="01005168499">
                 <div style="display: flex; gap: 8px; margin-top: 4px;">
                     <input type="color" id="set-phone-color" value="#64748b" style="width: 50px; height: 32px; padding: 2px; cursor: pointer;" title="لون التليفون">
@@ -970,7 +970,59 @@
                 </div>
             </div>
 
-            <button type="button" class="btn btn-primary" style="margin-top: 8px;" onclick="saveStoreSettings()">حفظ وتحديث الواجهة</button>
+            <hr style="border:0; border-top:1px solid var(--border); margin:10px 0;">
+            <div style="font-size:0.85rem; font-weight:800; color:var(--primary); margin-bottom:6px;"><i class="fa-solid fa-stamp"></i> إعدادات شكل ومكان الختم في الفاتورة:</div>
+
+            <div style="display: flex; gap: 8px;">
+                <div class="form-group" style="flex:1;">
+                    <label>مكان الختم بالفاتورة</label>
+                    <select id="set-stamp-position">
+                        <option value="right">يمين الفاتورة</option>
+                        <option value="center">منتصف الفاتورة</option>
+                        <option value="left">يسار الفاتورة</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>حجم الختم</label>
+                    <select id="set-stamp-size">
+                        <option value="small">صغير</option>
+                        <option value="medium">متوسط</option>
+                        <option value="large">كبير</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>تصميم شكل الختم (أنماط مبهرة وجذابة)</label>
+                <select id="set-stamp-style">
+                    <option value="1">1. الدائرة الملكية الكلاسيكية المزدوجة</option>
+                    <option value="2">2. الإطار المربع العصري المجدول</option>
+                    <option value="3">3. الختم السداسي الفاخر (هندسي)</option>
+                    <option value="4">4. النجمة الهندسية المضيئة المتاخمة</option>
+                </select>
+            </div>
+
+            <button type="button" class="btn btn-primary" style="margin-top: 8px;" onclick="saveStoreSettings()">حفظ وتحديث الواجهة والختم</button>
+        </div>
+    </div>
+
+    <!-- نافذة إدارة وحدات الأصناف -->
+    <div id="units-manager-modal" class="modal">
+        <div class="modal-content" style="max-width: 380px;">
+            <div class="modal-header">
+                <h3 style="font-size: 1rem; color: var(--primary);"><i class="fa-solid fa-boxes-stacked"></i> إدارة وحدات ونوع الأصناف</h3>
+                <button class="close-btn" onclick="closeModal('units-manager-modal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px;">أضف وحدة جديدة (مثل: لفة، أداة، كرتونة، دستة) أو عدل الوحدات الحالية:</p>
+            
+            <div style="display: flex; gap: 6px; margin-bottom: 10px;">
+                <input type="text" id="new-unit-name" placeholder="اسم الوحدة الجديدة..." style="flex:1;">
+                <button type="button" class="btn btn-success btn-sm" onclick="addNewUnit()"><i class="fa-solid fa-plus"></i> إضافة</button>
+            </div>
+
+            <div id="units-list-container" style="max-height: 180px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 6px; margin-bottom: 10px;"></div>
+
+            <button type="button" class="btn btn-primary btn-sm" style="width: 100%;" onclick="closeModal('units-manager-modal')">حفظ وإغلاق</button>
         </div>
     </div>
 
@@ -1330,10 +1382,9 @@
                         <input type="number" id="edit-p-qty" required>
                     </div>
                     <div class="form-group" style="flex:2;">
-                        <label>نوع الصنف</label>
+                        <label>الوحدة / النوع</label>
                         <select id="edit-p-unit">
-                            <option value="قطعة">عدد (قطعة)</option>
-                            <option value="متر">متر</option>
+                            <!-- سيتم تعبئتها ديناميكياً -->
                         </select>
                     </div>
                 </div>
@@ -1389,6 +1440,7 @@
         let drawings = JSON.parse(localStorage.getItem('sound_electronics_drawings')) || [];
         let capital = parseFloat(localStorage.getItem('sound_electronics_capital')) || 0;
         let capitalTransfers = JSON.parse(localStorage.getItem('sound_electronics_capital_transfers')) || [];
+        let storeUnits = JSON.parse(localStorage.getItem('sound_electronics_units')) || ['قطعة', 'متر', 'لفة', 'آلة', 'دستة', 'كرتونة'];
         
         let masterPin = localStorage.getItem('sound_electronics_pin') || '123';
 
@@ -1401,7 +1453,10 @@
             managerFont: "Tajawal",
             storePhone: "01005168499",
             phoneColor: "#64748b",
-            phoneFont: "Tajawal"
+            phoneFont: "Tajawal",
+            stampPosition: "right", // 'right', 'center', 'left'
+            stampSize: "medium", // 'small', 'medium', 'large'
+            stampStyle: 1 // 1: Classic Circle, 2: Modern Square, 3: Luxury Hexagon, 4: Star Badge
         };
 
         let currentTheme = localStorage.getItem('sound_electronics_theme') || 'theme-default';
@@ -1423,7 +1478,25 @@
             
             applyStoreSettingsToUI();
             applyThemeToBody(currentTheme, currentFont);
+            populateUnitsDropdowns();
         });
+
+        function populateUnitsDropdowns() {
+            ['p-unit', 'edit-p-unit'].forEach(selectId => {
+                const el = document.getElementById(selectId);
+                if (el) {
+                    const currentVal = el.value;
+                    el.innerHTML = '';
+                    storeUnits.forEach(u => {
+                        const opt = document.createElement('option');
+                        opt.value = u;
+                        opt.innerText = u;
+                        el.appendChild(opt);
+                    });
+                    if (currentVal && storeUnits.includes(currentVal)) el.value = currentVal;
+                }
+            });
+        }
 
         function toEnglishDigits(str) {
             if (!str) return '';
@@ -1515,6 +1588,10 @@
             document.getElementById('set-phone-color').value = storeSettings.phoneColor || '#64748b';
             document.getElementById('set-phone-font').value = storeSettings.phoneFont || 'Tajawal';
 
+            document.getElementById('set-stamp-position').value = storeSettings.stampPosition || 'right';
+            document.getElementById('set-stamp-size').value = storeSettings.stampSize || 'medium';
+            document.getElementById('set-stamp-style').value = storeSettings.stampStyle || 1;
+
             document.getElementById('settings-store-modal').classList.add('active');
         }
 
@@ -1531,10 +1608,71 @@
             storeSettings.phoneColor = document.getElementById('set-phone-color').value;
             storeSettings.phoneFont = document.getElementById('set-phone-font').value;
 
+            storeSettings.stampPosition = document.getElementById('set-stamp-position').value;
+            storeSettings.stampSize = document.getElementById('set-stamp-size').value;
+            storeSettings.stampStyle = parseInt(document.getElementById('set-stamp-style').value);
+
             localStorage.setItem('sound_electronics_store_config', JSON.stringify(storeSettings));
             applyStoreSettingsToUI();
             closeModal('settings-store-modal');
-            alert('تم تحديث بيانات الواجهة والخطوط واللون بنجاح!');
+            alert('تم تحديث بيانات الواجهة وتصميم الختم بنجاح!');
+        }
+
+        // إدارة وحدات الأصناف
+        function openUnitsManagerModal() {
+            closeAllDropdowns();
+            renderUnitsListInModal();
+            document.getElementById('units-manager-modal').classList.add('active');
+        }
+
+        function renderUnitsListInModal() {
+            const container = document.getElementById('units-list-container');
+            container.innerHTML = '';
+            storeUnits.forEach((u, idx) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; background:var(--surface); padding:4px 8px; border-radius:6px; margin-bottom:4px; border:1px solid var(--border);';
+                div.innerHTML = `
+                    <input type="text" value="${u}" id="unit-val-${idx}" style="padding:2px 6px; font-size:0.8rem; width:140px;">
+                    <div style="display:flex; gap:4px;">
+                        <button type="button" class="btn btn-sm btn-primary" style="padding:2px 6px; font-size:0.7rem;" onclick="updateUnitName(${idx})">تعديل</button>
+                        <button type="button" class="btn btn-sm btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="deleteUnitName(${idx})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addNewUnit() {
+            const input = document.getElementById('new-unit-name');
+            const val = input.value.trim();
+            if (!val) { alert('أدخل اسم الوحدة'); return; }
+            if (storeUnits.includes(val)) { alert('هذه الوحدة موجودة مسبقاً'); return; }
+            storeUnits.push(val);
+            localStorage.setItem('sound_electronics_units', JSON.stringify(storeUnits));
+            input.value = '';
+            renderUnitsListInModal();
+            populateUnitsDropdowns();
+            alert('تمت إضافة الوحدة بنجاح!');
+        }
+
+        function updateUnitName(idx) {
+            const input = document.getElementById(`unit-val-${idx}`);
+            const val = input.value.trim();
+            if (!val) { alert('اسم الوحدة لا يمكن أن يكون فارغاً'); return; }
+            storeUnits[idx] = val;
+            localStorage.setItem('sound_electronics_units', JSON.stringify(storeUnits));
+            populateUnitsDropdowns();
+            alert('تم تعديل اسم الوحدة بنجاح!');
+        }
+
+        function deleteUnitName(idx) {
+            if (storeUnits.length <= 1) { alert('يجب أن تبقى وحدة واحدة على الأقل'); return; }
+            if (confirm('هل تريد حذف هذه الوحدة؟')) {
+                storeUnits.splice(idx, 1);
+                localStorage.setItem('sound_electronics_units', JSON.stringify(storeUnits));
+                renderUnitsListInModal();
+                populateUnitsDropdowns();
+            }
         }
 
         function openThemeSelectorModal() {
@@ -1648,6 +1786,7 @@
                     if (cloudData.drawings) drawings = cloudData.drawings;
                     if (cloudData.capital !== undefined) capital = cloudData.capital;
                     if (cloudData.capitalTransfers) capitalTransfers = cloudData.capitalTransfers;
+                    if (cloudData.storeUnits) { storeUnits = cloudData.storeUnits; populateUnitsDropdowns(); }
                     saveLocalOnly();
                     renderAll();
                 }
@@ -1661,13 +1800,14 @@
             localStorage.setItem('sound_electronics_drawings', JSON.stringify(drawings));
             localStorage.setItem('sound_electronics_capital', capital);
             localStorage.setItem('sound_electronics_capital_transfers', JSON.stringify(capitalTransfers));
+            localStorage.setItem('sound_electronics_units', JSON.stringify(storeUnits));
         }
 
         function saveData() {
             saveLocalOnly();
             if (db) {
                 db.ref('store_data').set({
-                    products, sales, debts, drawings, capital, capitalTransfers, lastUpdate: Date.now()
+                    products, sales, debts, drawings, capital, capitalTransfers, storeUnits, lastUpdate: Date.now()
                 });
             }
             renderAll();
@@ -1696,7 +1836,7 @@
 
         function exportJSONBackup() {
             closeAllDropdowns();
-            const backupObj = { products, sales, debts, drawings, capital, capitalTransfers, storeSettings, version: "2.24" };
+            const backupObj = { products, sales, debts, drawings, capital, capitalTransfers, storeUnits, storeSettings, version: "2.27" };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
             const dlAnchor = document.createElement('a');
             dlAnchor.setAttribute("href", dataStr);
@@ -1806,7 +1946,7 @@
             if (pass === masterPin) {
                 if (confirm('هل أنت متأكد تماماً من تفريغ جميع بيانات التطبيق؟')) {
                     localStorage.clear();
-                    products = []; sales = []; debts = []; drawings = []; capital = 0; capitalTransfers = [];
+                    products = []; sales = []; debts = []; drawings = []; capital = 0; capitalTransfers = []; storeUnits = ['قطعة', 'متر'];
                     saveData();
                     alert('تم تفريغ جميع البيانات بنجاح!');
                 }
@@ -2010,6 +2150,7 @@
                     products.push({ id: Date.now(), name, cost, price, qty, unit, image: imgBase64 || '' });
                 }
                 e.target.reset();
+                populateUnitsDropdowns();
                 document.getElementById('profit-margin-indicator').innerText = `هامش الربح المتوقع: 0.00 ج.م (0%)`;
                 saveData();
                 alert('تم حفظ الصنف بنجاح!');
@@ -2099,6 +2240,69 @@
             document.getElementById('invoice-preview-modal').classList.add('active');
         }
 
+        // مولد الختم المخصص
+        function renderCustomStampHTML() {
+            const pos = storeSettings.stampPosition || 'right';
+            const size = storeSettings.stampSize || 'medium';
+            const style = storeSettings.stampStyle || 1;
+
+            let width = '120px', height = '120px', fontSizeTitle = '0.68rem', fontSizeManager = '0.58rem', fontSizePhone = '0.62rem';
+            if (size === 'small') { width = '95px'; height = '95px'; fontSizeTitle = '0.55rem'; fontSizeManager = '0.48rem'; fontSizePhone = '0.5rem'; }
+            if (size === 'large') { width = '150px'; height = '150px'; fontSizeTitle = '0.82rem'; fontSizeManager = '0.7rem'; fontSizePhone = '0.75rem'; }
+
+            let justifyContent = 'flex-end';
+            if (pos === 'center') justifyContent = 'center';
+            if (pos === 'left') justifyContent = 'flex-start';
+
+            let stampInner = '';
+            
+            if (style === 1) {
+                stampInner = `
+                    <div style="border: 3px solid #d90429; border-radius: 50%; width: ${width}; height: ${height}; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="border: 1.5px dashed #d90429; border-radius: 50%; width: calc(${width} - 14px); height: calc(${height} - 14px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; color: #d90429; font-weight: 800; text-align: center;">
+                            <div style="font-size: ${fontSizeTitle}; line-height: 1.2; margin-bottom: 2px;">${storeSettings.storeName}</div>
+                            <div style="width: 75%; height: 1.5px; background: #d90429; margin: 2px auto;"></div>
+                            <div style="font-size: ${fontSizeManager}; line-height: 1.2; margin-bottom: 2px;">${storeSettings.managerName}</div>
+                            <div style="font-size: ${fontSizePhone}; direction: ltr; font-weight: 800;">${storeSettings.storePhone}</div>
+                        </div>
+                    </div>
+                `;
+            } else if (style === 2) {
+                stampInner = `
+                    <div style="border: 3px double #0284c7; border-radius: 10px; width: calc(${width} + 15px); height: ${height}; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; color: #0284c7; font-weight: 800; text-align: center; box-sizing: border-box; background: rgba(2,132,199,0.03);">
+                        <div style="font-size: ${fontSizeTitle}; line-height: 1.2; margin-bottom: 3px;">${storeSettings.storeName}</div>
+                        <div style="width: 85%; height: 1.5px; background: #0284c7; margin: 3px auto;"></div>
+                        <div style="font-size: ${fontSizeManager}; line-height: 1.2; margin-bottom: 3px;">${storeSettings.managerName}</div>
+                        <div style="font-size: ${fontSizePhone}; direction: ltr; font-weight: 800;">${storeSettings.storePhone}</div>
+                    </div>
+                `;
+            } else if (style === 3) {
+                stampInner = `
+                    <div style="border: 3px solid #7c3aed; border-radius: 20px; width: ${width}; height: ${height}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; background: rgba(124,58,237,0.02);">
+                        <div style="border: 1.5px solid #7c3aed; border-radius: 16px; width: calc(${width} - 12px); height: calc(${height} - 12px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; color: #7c3aed; font-weight: 800; text-align: center;">
+                            <div style="font-size: ${fontSizeTitle}; line-height: 1.2; margin-bottom: 2px;">${storeSettings.storeName}</div>
+                            <div style="width: 70%; height: 1.5px; background: #7c3aed; margin: 2px auto;"></div>
+                            <div style="font-size: ${fontSizeManager}; line-height: 1.2; margin-bottom: 2px;">${storeSettings.managerName}</div>
+                            <div style="font-size: ${fontSizePhone}; direction: ltr; font-weight: 800;">${storeSettings.storePhone}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                stampInner = `
+                    <div style="border: 3px dashed #d97706; border-radius: 50%; width: ${width}; height: ${height}; display: flex; align-items: center; justify-content: center; box-sizing: border-box; background: rgba(217,119,6,0.03);">
+                        <div style="border: 2px solid #d97706; border-radius: 50%; width: calc(${width} - 12px); height: calc(${height} - 12px); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; color: #d97706; font-weight: 800; text-align: center;">
+                            <div style="font-size: ${fontSizeTitle}; line-height: 1.2; margin-bottom: 2px;">★ ${storeSettings.storeName} ★</div>
+                            <div style="width: 75%; height: 1px; background: #d97706; margin: 2px auto;"></div>
+                            <div style="font-size: ${fontSizeManager}; line-height: 1.2; margin-bottom: 2px;">${storeSettings.managerName}</div>
+                            <div style="font-size: ${fontSizePhone}; direction: ltr; font-weight: 800;">${storeSettings.storePhone}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `<div style="display: flex; justify-content: ${justifyContent}; margin-top: 14px; width: 100%;">${stampInner}</div>`;
+        }
+
         function generateInvoiceHTMLString(clientName, clientPhone, dateStr, itemsArr, subtotalVal, discountVal, netVal, paidVal, remainingVal) {
             let itemsRows = '';
             itemsArr.forEach(i => {
@@ -2139,19 +2343,12 @@
                 <div style="font-size: 0.95rem; line-height: 1.9; font-weight: 800; color: #000; margin-bottom: 16px;">
                     <div style="display: flex; justify-content: space-between;"><span>الإجمالي:</span><span>${subtotalVal.toFixed(2)} ج.م</span></div>
                     ${discountRowHtml}
-                    <div style="display: flex; justify-content: space-between; color: var(--primary); font-size: 1.1rem; border-top: 1px dashed #cbd5e1; padding-top: 4px;"><span>الصافي المطلوب:</span><span>${netVal.toFixed(2)} ج.م</span></div>
+                    <div style="display: flex; justify-content: space-between; color: var(--primary); font-size: 1.05rem; border-top: 1px dashed #cbd5e1; padding-top: 4px;"><span>الصافي المطلوب:</span><span>${netVal.toFixed(2)} ج.م</span></div>
+                    <div style="display: flex; justify-content: space-between; color: #38b000; padding-top: 2px;"><span>المبلغ المدفوع:</span><span>${(paidVal !== undefined ? paidVal : netVal).toFixed(2)} ج.م</span></div>
+                    <div style="display: flex; justify-content: space-between; color: #d90429; padding-top: 2px;"><span>المبلغ المتبقي (آجل):</span><span>${(remainingVal !== undefined ? remainingVal : 0).toFixed(2)} ج.م</span></div>
                 </div>
 
-                <div style="text-align: right; margin-top: 10px; padding-right: 10px;">
-                    <div style="display: inline-block; border: 3px solid #d90429; border-radius: 50%; width: 140px; height: 140px; position: relative; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="border: 1.5px dashed #d90429; border-radius: 50%; width: 126px; height: 126px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px; color: #d90429; font-weight: 800; text-align: center;">
-                            <div style="font-size: 0.72rem; line-height: 1.2; margin-bottom: 2px;">${storeSettings.storeName}</div>
-                            <div style="width: 85px; height: 1.5px; background: #d90429; margin: 3px auto;"></div>
-                            <div style="font-size: 0.62rem; line-height: 1.2; margin-bottom: 2px;">${storeSettings.managerName}</div>
-                            <div style="font-size: 0.65rem; direction: ltr; font-weight: 800;">${storeSettings.storePhone}</div>
-                        </div>
-                    </div>
-                </div>
+                ${renderCustomStampHTML()}
             `;
         }
 
@@ -2208,14 +2405,7 @@
                         <div style="display: flex; justify-content: space-between; color: #d90429; font-size: 1.05rem; border-top: 1px dashed #cbd5e1; padding-top: 4px; margin-top: 4px;"><span>المتبقي النهائي الصافي:</span><span>${finalRemaining.toFixed(2)} ج.م</span></div>
                     </div>
 
-                    <div style="text-align: right; margin-top: 12px; padding-right: 10px;">
-                        <div style="display: inline-block; border: 2px solid #d90429; border-radius: 50%; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                            <div style="border: 1px dashed #d90429; border-radius: 50%; width: 98px; height: 98px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; color: #d90429; font-weight: 800; text-align: center;">
-                                <div style="font-size: 0.65rem; line-height: 1.1;">${storeSettings.storeName}</div>
-                                <div style="font-size: 0.55rem; direction: ltr;">${storeSettings.storePhone}</div>
-                            </div>
-                        </div>
-                    </div>
+                    ${renderCustomStampHTML()}
                 </div>
             `;
         }
@@ -2633,10 +2823,21 @@
                 const remainingVal = (s.remaining !== undefined) ? s.remaining : 0;
                 const statusBadge = remainingVal <= 0 ? '<span class="badge badge-success">خالص</span>' : `<span class="badge badge-warning">متبقي: ${remainingVal.toFixed(2)}</span>`;
 
+                let phoneContactHtml = '';
+                if (s.phone) {
+                    phoneContactHtml = `
+                        <div style="display:flex; gap:4px; margin-top:3px; align-items:center;">
+                            <span style="font-size:0.72rem; color:var(--secondary);"><i class="fa-solid fa-phone"></i> ${s.phone}</span>
+                            <a href="tel:${s.phone}" class="btn btn-call btn-sm" style="padding:1px 5px; font-size:0.68rem; text-decoration:none;" title="اتصال هاتفي"><i class="fa-solid fa-phone-volume"></i> اتصال</a>
+                            <a href="https://wa.me/2${s.phone}?text=${encodeURIComponent('مرحباً ' + (s.client || 'عالمنا الكريم') + '، شكراً لتعاملكم معنا في ' + storeSettings.storeName)}" target="_blank" class="btn btn-whatsapp btn-sm" style="padding:1px 5px; font-size:0.68rem; text-decoration:none;" title="تواصل واتساب"><i class="fa-brands fa-whatsapp"></i> واتس</a>
+                        </div>
+                    `;
+                }
+
                 item.innerHTML = `
                     <div class="item-content">
                         <div class="item-header">
-                            <span class="item-title">${s.type === 'invoice' ? 'فاتورة: ' + s.client : s.productName}</span>
+                            <span class="item-title">${s.type === 'invoice' ? 'فاتورة: ' + (s.client || 'عميل نقدي') : s.productName}</span>
                             <div style="display: flex; align-items: center; gap: 6px;">
                                 ${statusBadge}
                                 <div class="dropdown-menu-container">
@@ -2647,7 +2848,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">الإجمالي: <b>${(s.net !== undefined ? s.net : s.total).toFixed(2)} ج.م</b></div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">الإجمالي: <b>${(s.net !== undefined ? s.net : s.total).toFixed(2)} ج.م</b> | التاريخ: ${s.date}</div>
+                        ${phoneContactHtml}
                     </div>
                 `;
                 list.appendChild(item);
@@ -2669,7 +2871,7 @@
             const html = generateInvoiceHTMLString(s.client || 'نقدي', s.phone || '', s.date, itemsArr, subtot, disc, net, paid, remaining);
             document.getElementById('invoice-preview-body').innerHTML = html;
             document.getElementById('invoice-save-btn').style.display = 'none';
-            activePreviewText = `*فاتورة ${s.client || 'نقدي'}* - الإجمالي: ${net.toFixed(2)} ج.م`;
+            activePreviewText = `*فاتورة ${s.client || 'نقدي'}* - الإجمالي: ${net.toFixed(2)} ج.م (مدفوع: ${paid.toFixed(2)} - متبقي: ${remaining.toFixed(2)})`;
             document.getElementById('invoice-preview-modal').classList.add('active');
         }
 
@@ -2920,7 +3122,6 @@
 
         function updateCapital(val) { capital = parseFloat(val) || 0; saveData(); }
 
-        // الدالة المحدثة لحساب قائمة الدخل بالمعادلة الدقيقة وتصفير صافي الدخل عند الترحيل
         function renderIncomeStatement() {
             let totalSalesSum = 0, totalCOGS = 0;
             sales.forEach(s => {
@@ -2950,16 +3151,10 @@
             const totalDrawings = drawings.reduce((sum, d) => sum + (parseFloat(d.amount) || 0), 0);
             const totalTransfers = capitalTransfers.reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
             
-            // حساب إجمالي تكلفة البضاعة بالمخزن (كمية كل صنف × سعر التكلفة)
             const totalInventoryCost = products.reduce((sum, p) => sum + ((parseFloat(p.cost) || 0) * (parseInt(p.qty) || 0)), 0);
-            
-            // حساب القيمة التقديرية بسعر البيع (كمية كل صنف × سعر البيع المقترح)
             const totalInventorySell = products.reduce((sum, p) => sum + ((parseFloat(p.price) || 0) * (parseInt(p.qty) || 0)), 0);
-            
-            // حساب الربح التقديري
             const estimatedProfit = totalInventorySell - totalInventoryCost;
 
-            // صافي الدخل النهائي بعد خصم التكلفة والديون والمسحوبات والمرحل سابقاً
             const netIncome = Math.max(0, totalSalesSum - totalCOGS - remainingDebtsSum - totalDrawings - totalTransfers);
 
             document.getElementById('inc-sales').innerText = `${totalSalesSum.toFixed(2)} ج.م`;
@@ -3048,6 +3243,7 @@
             renderDebts();
             renderIncomeStatement();
             renderInvoiceItemsTable();
+            populateUnitsDropdowns();
         }
 
         renderAll();

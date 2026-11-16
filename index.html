@@ -362,16 +362,17 @@
             position: relative;
         }
 
+        /* تكبير حجم الصورة داخل الإطار قليلاً مع الحفاظ على حجم الإطار الخارجي */
         .product-card-img-box {
             width: 100%;
-            height: 65px;
+            height: 95px;
             background: #121824;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-muted);
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             margin-bottom: 5px;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -411,9 +412,9 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.7rem;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             border-top: 1px dashed var(--border);
-            padding-top: 5px;
+            padding-top: 4px;
         }
 
         .add-to-cart-card-btn {
@@ -421,9 +422,9 @@
             border: 1px solid var(--border);
             color: var(--primary);
             width: 100%;
-            padding: 5px;
+            padding: 6px;
             border-radius: 6px;
-            font-size: 0.72rem;
+            font-size: 0.75rem;
             font-weight: 800;
             display: flex;
             align-items: center;
@@ -445,10 +446,10 @@
             background: #27272a;
             border: 1px solid var(--border);
             border-radius: 6px;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             color: var(--primary);
             cursor: pointer;
-            padding: 3px 8px;
+            padding: 5px 10px;
         }
         .action-dropdown {
             position: absolute;
@@ -832,8 +833,8 @@
                     <div class="form-group" style="flex:1.5;">
                         <label>رقم التليفون</label>
                         <div style="display: flex; gap: 4px;">
-                            <input type="text" id="inv-client-phone" placeholder="01xxxxxxxxx..." style="flex:1;">
-                            <button type="button" class="voice-mic-btn" onclick="startVoiceInput('inv-client-phone')" title="إملاء بالصوت"><i class="fa-solid fa-microphone"></i></button>
+                            <input type="text" id="inv-client-phone" placeholder="01xxxxxxxxx..." dir="ltr" style="flex:1; direction: ltr; text-align: right;">
+                            <button type="button" class="voice-mic-btn" onclick="startVoiceInput('inv-client-phone', cleanPhoneInput)" title="إملاء بالصوت"><i class="fa-solid fa-microphone"></i></button>
                         </div>
                     </div>
                 </div>
@@ -916,7 +917,7 @@
                         </div>
                         <div class="form-group" style="flex:1.5;">
                             <label>رقم التليفون</label>
-                            <input type="text" id="d-phone" placeholder="01xxxxxxxxx...">
+                            <input type="text" id="d-phone" placeholder="01xxxxxxxxx..." dir="ltr" style="direction: ltr; text-align: right;">
                         </div>
                     </div>
                     <div class="form-group custom-dropdown-container">
@@ -1170,7 +1171,7 @@
             </div>
             <input type="hidden" id="edit-sale-id">
             <div class="form-group"><label>اسم العميل</label><input type="text" id="edit-sale-client"></div>
-            <div class="form-group"><label>رقم التليفون</label><input type="text" id="edit-sale-phone"></div>
+            <div class="form-group"><label>رقم التليفون</label><input type="text" id="edit-sale-phone" dir="ltr" style="direction: ltr; text-align: right;"></div>
             <div style="font-size: 0.78rem; font-weight: 800; color: var(--secondary); margin: 6px 0;">أصناف الفاتورة:</div>
             <div id="edit-sale-items-container" style="max-height: 180px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 6px; margin-bottom: 8px;"></div>
             <button type="button" class="btn btn-primary" onclick="saveEditedSaleData()">حفظ التعديلات وإرجاع المخزون</button>
@@ -1281,7 +1282,6 @@
         let isAddProductVisible = false;
 
         document.addEventListener('DOMContentLoaded', () => {
-            // التحقق مما إذا تم تسجيل الدخول مسبقاً في هذه الجلسة لعدم طلبه عند تحديث الصفحة
             if (sessionStorage.getItem('app_logged_in') === 'true') {
                 const loginModal = document.getElementById('startup-login-modal');
                 if (loginModal) loginModal.style.display = 'none';
@@ -1296,6 +1296,17 @@
             populateUnitsDropdowns();
             renderAll();
         });
+
+        // تنظيف وصياغة رقم التليفون الناتج عن الإملاء الصوتي ليناسب اليسار لليمين وبدون مسافات مقلوبة
+        function cleanPhoneInput() {
+            ['inv-client-phone', 'd-phone', 'edit-sale-phone'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.value) {
+                    let cleaned = el.value.replace(/\s+/g, '').replace(/[^\d+]/g, '');
+                    el.value = cleaned;
+                }
+            });
+        }
 
         // ميزة البحث والإملاء الصوتي
         function startVoiceInput(inputId, callback) {
@@ -1315,6 +1326,9 @@
                 if (inputEl) {
                     inputEl.value = speechResult;
                     inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+                    if (inputId.includes('phone')) {
+                        cleanPhoneInput();
+                    }
                     if (callback && typeof callback === 'function') callback();
                 }
             };
@@ -1376,13 +1390,17 @@
         document.addEventListener('click', () => closeAllDropdowns());
 
         function saveData() {
-            localStorage.setItem('sound_electronics_products', JSON.stringify(products));
-            localStorage.setItem('sound_electronics_sales', JSON.stringify(sales));
-            localStorage.setItem('sound_electronics_debts', JSON.stringify(debts));
-            localStorage.setItem('sound_electronics_drawings', JSON.stringify(drawings));
-            localStorage.setItem('sound_electronics_base_capital', baseCapital);
-            localStorage.setItem('sound_electronics_capital_transfers', JSON.stringify(capitalTransfers));
-            localStorage.setItem('sound_electronics_units', JSON.stringify(storeUnits));
+            try {
+                localStorage.setItem('sound_electronics_products', JSON.stringify(products));
+                localStorage.setItem('sound_electronics_sales', JSON.stringify(sales));
+                localStorage.setItem('sound_electronics_debts', JSON.stringify(debts));
+                localStorage.setItem('sound_electronics_drawings', JSON.stringify(drawings));
+                localStorage.setItem('sound_electronics_base_capital', baseCapital);
+                localStorage.setItem('sound_electronics_capital_transfers', JSON.stringify(capitalTransfers));
+                localStorage.setItem('sound_electronics_units', JSON.stringify(storeUnits));
+            } catch (err) {
+                console.log("LocalStorage quota exceeded or error", err);
+            }
             if (db) {
                 try {
                     db.ref('store_data').set({ products, sales, debts, drawings, baseCapital, capitalTransfers, storeUnits });
@@ -1537,7 +1555,6 @@
             renderInventory();
         }
 
-        // دالة لتعديل الكمية مباشرة (+ / -) في المخزن
         function updateInventoryQtyDirect(id, amount) {
             const p = products.find(item => item.id === id);
             if (p) {
@@ -1546,6 +1563,7 @@
             }
         }
 
+        // تصميم جديد ومنظم ومضغوط لبيانات بطاقة المخزن (التكلفة، البيع، هامش الربح، والكمية في إطار متناسق وشيك)
         function renderInventory() {
             const grid = document.getElementById('inventory-grid-container');
             const query = document.getElementById('inventory-search').value;
@@ -1567,6 +1585,10 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 const imgHtml = p.image ? `<img src="${p.image}" onclick="enlargeImage('${p.image}')">` : `<i class="fa-solid fa-box"></i>`;
+                
+                const costVal = parseFloat(p.cost) || 0;
+                const priceVal = parseFloat(p.price) || 0;
+                let profitMarginPercent = costVal > 0 ? (((priceVal - costVal) / costVal) * 100).toFixed(1) : (priceVal > 0 ? '100' : '0');
 
                 card.innerHTML = `
                     <div>
@@ -1574,18 +1596,22 @@
                         <div class="product-category-tag">${p.category || 'عام'}</div>
                         <div class="product-card-title">${p.name}</div>
                     </div>
-                    <div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 3px;">
-                            تكلفة: <b>${p.cost.toFixed(2)}</b> | بيع: <b style="color:var(--primary);">${p.price.toFixed(2)}</b>
+                    <div style="background: #121824; border: 1px solid var(--border); border-radius: 8px; padding: 5px; margin-top: 4px;">
+                        <div style="font-size: 0.65rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 2px;">
+                            <span>تكلفة: <b style="color:var(--text);">${costVal.toFixed(2)}</b></span>
+                            <span>بيع: <b style="color:var(--primary);">${priceVal.toFixed(2)}</b></span>
                         </div>
-                        <div class="product-card-footer-info" style="display:flex; justify-content:space-between; align-items:center;">
-                            <div style="display:flex; align-items:center; gap:2px;">
-                                <button type="button" class="btn btn-sm btn-danger" style="padding:1px 5px; font-size:0.7rem;" onclick="updateInventoryQtyDirect(${p.id}, -1)"><i class="fa-solid fa-minus"></i></button>
-                                <span style="font-weight:800; font-size:0.75rem;">${p.qty}</span>
-                                <button type="button" class="btn btn-sm btn-success" style="padding:1px 5px; font-size:0.7rem;" onclick="updateInventoryQtyDirect(${p.id}, 1)"><i class="fa-solid fa-plus"></i></button>
+                        <div style="font-size: 0.62rem; color: var(--success); font-weight: 800; text-align: center; margin-bottom: 4px; border-bottom: 1px dashed var(--border); padding-bottom: 2px;">
+                            هامش الربح: ${profitMarginPercent}%
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 2px; background: #1a2234; border: 1px solid var(--border); border-radius: 6px; padding: 2px 4px;">
+                                <button type="button" class="btn btn-sm btn-danger" style="padding: 2px 6px; font-size: 0.75rem; border-radius: 4px; min-width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;" onclick="updateInventoryQtyDirect(${p.id}, -1)"><i class="fa-solid fa-minus"></i></button>
+                                <span style="font-weight: 800; font-size: 0.78rem; padding: 0 4px; min-width: 20px; text-align: center;">${p.qty}</span>
+                                <button type="button" class="btn btn-sm btn-success" style="padding: 2px 6px; font-size: 0.75rem; border-radius: 4px; min-width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;" onclick="updateInventoryQtyDirect(${p.id}, 1)"><i class="fa-solid fa-plus"></i></button>
                             </div>
                             <div class="dropdown-menu-container">
-                                <button class="action-menu-btn" onclick="toggleActionMenu('inv_${p.id}', event)"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                <button class="action-menu-btn" style="padding: 2px 8px; height: 26px; font-size: 0.85rem;" onclick="toggleActionMenu('inv_${p.id}', event)"><i class="fa-solid fa-ellipsis-vertical"></i></button>
                                 <div id="action-menu-inv_${p.id}" class="action-dropdown">
                                     <button onclick="openEditProductModal(${p.id})"><i class="fa-solid fa-pen-to-square" style="color:var(--warning);"></i> تعديل الصنف</button>
                                     <button onclick="deleteInventoryProduct(${p.id})"><i class="fa-solid fa-trash" style="color:var(--danger);"></i> حذف الصنف</button>
@@ -1645,7 +1671,27 @@
         function convertImageToBase64(fileInput, callback) {
             if (fileInput && fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
-                reader.onload = e => callback(e.target.result);
+                reader.onload = e => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 250;
+                        const MAX_HEIGHT = 250;
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        callback(canvas.toDataURL('image/jpeg', 0.6));
+                    };
+                    img.src = e.target.result;
+                };
                 reader.readAsDataURL(fileInput.files[0]);
             } else { callback(null); }
         }
@@ -1790,7 +1836,7 @@
                 
                 <div style="font-size: 0.8rem; margin-bottom: 8px; font-weight: 800; color: #000; display: flex; flex-direction: column; gap: 3px; background: #f8fafc; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1;">
                     <div>اسم العميل: <b>${clientName}</b></div>
-                    ${clientPhone ? '<div>تليفون العميل: <b>' + clientPhone + '</b></div>' : ''}
+                    ${clientPhone ? '<div>تليفون العميل: <b dir="ltr" style="direction: ltr; unicode-bidi: embed; display: inline-block;">' + clientPhone + '</b></div>' : ''}
                     <div>تاريخ الفاتورة: <b>${new Date().toLocaleDateString('ar-EG')}</b></div>
                 </div>
 
@@ -1879,7 +1925,7 @@
                 if (s.phone) {
                     phoneActionHtml = `
                         <div style="display:flex; gap:5px; margin-top:4px; align-items:center;">
-                            <span style="font-size:0.7rem; color:var(--text-muted);"><i class="fa-solid fa-phone"></i> ${s.phone}</span>
+                            <span style="font-size:0.7rem; color:var(--text-muted); direction:ltr; unicode-bidi:embed; display:inline-block;"><i class="fa-solid fa-phone"></i> ${s.phone}</span>
                             <a href="tel:${s.phone}" class="btn btn-call btn-sm" style="padding:1px 6px; font-size:0.65rem; text-decoration:none;"><i class="fa-solid fa-phone-volume"></i> اتصال</a>
                             <a href="https://wa.me/2${s.phone}?text=${encodeURIComponent('مرحباً ' + s.client + '، شكراً لتعاملكم معنا في ' + storeSettings.storeName)}" target="_blank" class="btn btn-whatsapp btn-sm" style="padding:1px 6px; font-size:0.65rem; text-decoration:none;"><i class="fa-brands fa-whatsapp"></i> واتس</a>
                         </div>
@@ -2001,7 +2047,7 @@
                     <div style="font-size: 0.75rem; color: #475569; font-weight: 700; border-bottom: 2px solid #f59e0b; padding-bottom: 5px; margin-top: 3px;">${storeSettings.managerName} - ت: ${storeSettings.storePhone}</div>
                 </div>
                 <div style="font-size: 0.8rem; margin-bottom: 8px; font-weight: 800; color: #000; background: #f8fafc; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1;">
-                    <div>العميل: <b>${s.client}</b> ${s.phone ? '| ت: ' + s.phone : ''}</div>
+                    <div>العميل: <b>${s.client}</b> ${s.phone ? '| ت: <span dir="ltr" style="direction: ltr; unicode-bidi: embed; display: inline-block;">' + s.phone + '</span>' : ''}</div>
                     <div>التاريخ: <b>${s.date}</b></div>
                 </div>
                 <table style="width:100%; border-collapse:collapse; margin:6px 0; font-size:0.78rem;">
@@ -2082,7 +2128,7 @@
                 
                 <div style="font-size: 0.8rem; margin-bottom: 8px; font-weight: 800; color: #000; background: #f8fafc; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1;">
                     <div>اسم العميل: <b>${d.client}</b></div>
-                    ${d.phone ? '<div>رقم التليفون: <b>' + d.phone + '</b></div>' : ''}
+                    ${d.phone ? '<div>رقم التليفون: <b dir="ltr" style="direction: ltr; unicode-bidi: embed; display: inline-block;">' + d.phone + '</b></div>' : ''}
                     <div>تاريخ الدين: <b>${d.date}</b></div>
                     <div>الصنف / البيان: <b>${d.productName || 'مبيعات آجلة'}</b></div>
                 </div>
@@ -2407,7 +2453,7 @@
         }
 
         function promptMasterSheetsPIN() {
-            if (prompt('أدخل كلمة المرور للوحة البيانات الثلاث:') === masterPin) {
+            if (prompt('أدخل كلمة المرور لوحة البيانات الثلاث:') === masterPin) {
                 switchMasterTab(1);
                 document.getElementById('master-sheets-modal').classList.add('active');
             }

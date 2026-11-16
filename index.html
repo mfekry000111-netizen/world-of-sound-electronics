@@ -338,7 +338,6 @@
             border-color: var(--primary);
         }
 
-        /* تصغير وتنظيم بطاقات المنتجات والأصناف (أصغر وأجمل ومنظمة بجانب بعضها وتحت بعضها) */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -362,7 +361,6 @@
             position: relative;
         }
 
-        /* تكبير حجم الصورة داخل الإطار قليلاً مع الحفاظ على حجم الإطار الخارجي */
         .product-card-img-box {
             width: 100%;
             height: 95px;
@@ -656,6 +654,16 @@
             background: var(--primary);
             color: #000;
         }
+        .voice-mic-btn.recording {
+            background: var(--danger);
+            color: #fff;
+            animation: pulse-mic 1s infinite;
+        }
+        @keyframes pulse-mic {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body class="theme-gold">
@@ -689,7 +697,6 @@
                 </button>
             </div>
             
-            <!-- الإطار المستطيل المرتب والمتوسط للواجهة -->
             <div class="header-center-box">
                 <div class="header-title" id="header-store-title">
                     <i class="fa-solid fa-store" style="color:var(--primary);"></i> عالم الصوت والإلكترونيات
@@ -736,7 +743,7 @@
                 <div class="search-box" style="flex: 1; margin-bottom: 0;">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="products-page-search" placeholder="ابحث في المنتجات..." oninput="renderProductsPage()">
-                    <button type="button" class="voice-mic-btn" onclick="startVoiceInput('products-page-search', renderProductsPage)" title="البحث الصوتي"><i class="fa-solid fa-microphone"></i></button>
+                    <button type="button" id="mic-btn-products-page-search" class="voice-mic-btn" onclick="startVoiceInput('products-page-search', renderProductsPage)" title="البحث الصوتي"><i class="fa-solid fa-microphone"></i></button>
                 </div>
                 <button type="button" class="icon-box-btn" onclick="openProductCartModal()" title="سلة المنتجات" style="margin-right: 6px; width: 40px; height: 40px;">
                     <i class="fa-solid fa-cart-shopping" style="font-size: 1.1rem;"></i>
@@ -767,7 +774,7 @@
                             <label>اسم الصنف</label>
                             <div style="display: flex; gap: 4px;">
                                 <input type="text" id="p-name" placeholder="أدخل اسم الصنف..." oninput="filterDropdown('inv_add')" autocomplete="off" required style="flex:1;">
-                                <button type="button" class="voice-mic-btn" onclick="startVoiceInput('p-name')" title="إملاء بالصوت"><i class="fa-solid fa-microphone"></i></button>
+                                <button type="button" id="mic-btn-p-name" class="voice-mic-btn" onclick="startVoiceInput('p-name')" title="إملاء بالصوت"><i class="fa-solid fa-microphone"></i></button>
                             </div>
                             <div id="inv_add-dropdown-list" class="dropdown-list"></div>
                         </div>
@@ -803,7 +810,7 @@
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="inventory-search" placeholder="ابحث باسم الصنف أو القسم..." oninput="renderInventory()">
-                <button type="button" class="voice-mic-btn" onclick="startVoiceInput('inventory-search', renderInventory)" title="بحث صوتي"><i class="fa-solid fa-microphone"></i></button>
+                <button type="button" id="mic-btn-inventory-search" class="voice-mic-btn" onclick="startVoiceInput('inventory-search', renderInventory)" title="بحث صوتي"><i class="fa-solid fa-microphone"></i></button>
             </div>
 
             <div class="category-filters-scroll" id="category-chips-container">
@@ -827,14 +834,14 @@
                         <label>اسم العميل</label>
                         <div style="display: flex; gap: 4px;">
                             <input type="text" id="inv-client-name" placeholder="عميل 1..." value="عميل 1" style="flex:1;">
-                            <button type="button" class="voice-mic-btn" onclick="startVoiceInput('inv-client-name')" title="إملاء بالصوت"><i class="fa-solid fa-microphone"></i></button>
+                            <button type="button" id="mic-btn-inv-client-name" class="voice-mic-btn" onclick="startVoiceInput('inv-client-name')" title="إملاء بالصوت"><i class="fa-solid fa-microphone"></i></button>
                         </div>
                     </div>
                     <div class="form-group" style="flex:1.5;">
                         <label>رقم التليفون</label>
                         <div style="display: flex; gap: 4px;">
                             <input type="text" id="inv-client-phone" placeholder="01xxxxxxxxx..." dir="ltr" style="flex:1; direction: ltr; text-align: right;">
-                            <button type="button" class="voice-mic-btn" onclick="startVoiceInput('inv-client-phone', cleanPhoneInput)" title="إملاء بالصوت"><i class="fa-solid fa-microphone"></i></button>
+                            <button type="button" id="mic-btn-inv-client-phone" class="voice-mic-btn" onclick="startVoiceInput('inv-client-phone', cleanPhoneInput)" title="إملاء بالصوت"><i class="fa-solid fa-microphone"></i></button>
                         </div>
                     </div>
                 </div>
@@ -843,7 +850,7 @@
                     <label>بحث واختيار الصنف للفاتورة</label>
                     <div style="display: flex; gap: 4px;">
                         <input type="text" id="inv-product-search" placeholder="اكتب اسم الصنف للبحث..." oninput="filterDropdown('inv')" autocomplete="off" style="flex:1;">
-                        <button type="button" class="voice-mic-btn" onclick="startVoiceInput('inv-product-search', () => filterDropdown('inv'))" title="بحث صوتي"><i class="fa-solid fa-microphone"></i></button>
+                        <button type="button" id="mic-btn-inv-product-search" class="voice-mic-btn" onclick="startVoiceInput('inv-product-search', () => filterDropdown('inv'))" title="بحث صوتي"><i class="fa-solid fa-microphone"></i></button>
                     </div>
                     <input type="hidden" id="inv-selected-product-id">
                     <div id="inv-dropdown-list" class="dropdown-list"></div>
@@ -896,7 +903,7 @@
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="sales-search" placeholder="ابحث في سجل الفواتير..." oninput="renderSales()">
-                <button type="button" class="voice-mic-btn" onclick="startVoiceInput('sales-search', renderSales)"><i class="fa-solid fa-microphone"></i></button>
+                <button type="button" id="mic-btn-sales-search" class="voice-mic-btn" onclick="startVoiceInput('sales-search', renderSales)"><i class="fa-solid fa-microphone"></i></button>
             </div>
             <div id="sales-list"></div>
         </div>
@@ -947,7 +954,7 @@
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" id="debts-search" placeholder="ابحث في ديون العملاء..." oninput="renderDebts()">
-                <button type="button" class="voice-mic-btn" onclick="startVoiceInput('debts-search', renderDebts)"><i class="fa-solid fa-microphone"></i></button>
+                <button type="button" id="mic-btn-debts-search" class="voice-mic-btn" onclick="startVoiceInput('debts-search', renderDebts)"><i class="fa-solid fa-microphone"></i></button>
             </div>
             <div id="debts-list"></div>
         </div>
@@ -1050,6 +1057,10 @@
             <div style="display:flex; gap:6px;">
                 <div class="form-group" style="flex:2;"><label>الكمية</label><input type="number" id="edit-p-qty"></div>
                 <div class="form-group" style="flex:2;"><label>الوحدة</label><select id="edit-p-unit"></select></div>
+            </div>
+            <div class="form-group">
+                <label><i class="fa-solid fa-image"></i> صورة الصنف (تغيير أو إضافة)</label>
+                <input type="file" id="edit-p-image-file" accept="image/*">
             </div>
             <button type="button" class="btn btn-primary" style="margin-top:8px;" onclick="saveEditedProduct()">حفظ التعديلات</button>
         </div>
@@ -1192,11 +1203,21 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة -->
+    <!-- نافذة تكبير الصورة (تم إضافة أزرار حفظ كصورة ومشاركة واتساب) -->
     <div id="image-modal" class="modal" onclick="closeModal('image-modal')">
-        <div class="modal-content" style="max-width: 320px; text-align: center;" onclick="event.stopPropagation()">
-            <img id="enlarged-img" src="" style="width: 100%; max-height: 320px; border-radius: 8px; object-fit: contain;">
-            <button type="button" class="btn btn-danger btn-sm" style="margin-top: 8px; width: 100%;" onclick="closeModal('image-modal')">إغلاق</button>
+        <div class="modal-content" style="max-width: 380px; text-align: center;" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 style="font-size: 0.95rem; color: var(--primary);"><i class="fa-solid fa-image"></i> صورة الصنف</h3>
+                <button class="close-btn" onclick="closeModal('image-modal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                <button type="button" class="btn btn-whatsapp btn-sm" style="flex:1;" onclick="shareEnlargedImageWhatsApp()"><i class="fa-brands fa-whatsapp"></i> واتساب</button>
+                <button type="button" class="btn btn-primary btn-sm" style="flex:1;" onclick="downloadEnlargedImage()"><i class="fa-solid fa-image"></i> حفظ كصورة</button>
+            </div>
+            <div style="background: #121824; padding: 8px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px;">
+                <img id="enlarged-img" src="" style="width: 100%; max-height: 300px; border-radius: 6px; object-fit: contain;">
+            </div>
+            <button type="button" class="btn btn-danger btn-sm" style="width: 100%;" onclick="closeModal('image-modal')">إغلاق</button>
         </div>
     </div>
 
@@ -1280,6 +1301,9 @@
         let selectedCategoryFilter = 'الكل';
         let selectedProductsCatFilter = 'الكل';
         let isAddProductVisible = false;
+        let currentPreviewData = null;
+        let currentEnlargedImgSrc = '';
+        let currentEnlargedProductName = '';
 
         document.addEventListener('DOMContentLoaded', () => {
             if (sessionStorage.getItem('app_logged_in') === 'true') {
@@ -1297,7 +1321,6 @@
             renderAll();
         });
 
-        // تنظيف وصياغة رقم التليفون الناتج عن الإملاء الصوتي ليناسب اليسار لليمين وبدون مسافات مقلوبة
         function cleanPhoneInput() {
             ['inv-client-phone', 'd-phone', 'edit-sale-phone'].forEach(id => {
                 const el = document.getElementById(id);
@@ -1308,31 +1331,82 @@
             });
         }
 
-        // ميزة البحث والإملاء الصوتي
+        let activeRecognition = null;
+        let activeRecognitionInputId = null;
+
         function startVoiceInput(inputId, callback) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
                 alert('متصفحك لا يدعم البحث والإملاء الصوتي');
                 return;
             }
+
+            const micBtn = document.getElementById(`mic-btn-${inputId}`);
+
+            if (activeRecognition && activeRecognitionInputId === inputId) {
+                activeRecognition.stop();
+                return;
+            }
+
+            if (activeRecognition) {
+                try { activeRecognition.stop(); } catch(e){}
+            }
+
             const recognition = new SpeechRecognition();
+            activeRecognition = recognition;
+            activeRecognitionInputId = inputId;
+
             recognition.lang = 'ar-EG';
-            recognition.interimResults = false;
+            recognition.interimResults = true;
             recognition.maxAlternatives = 1;
 
+            if (micBtn) micBtn.classList.add('recording');
+
             recognition.onresult = (event) => {
-                const speechResult = event.results[0][0].transcript;
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
                 const inputEl = document.getElementById(inputId);
                 if (inputEl) {
-                    inputEl.value = speechResult;
-                    inputEl.dispatchEvent(new Event('input', { bubbles: true }));
-                    if (inputId.includes('phone')) {
-                        cleanPhoneInput();
+                    const textToWrite = finalTranscript || interimTranscript;
+                    if (textToWrite) {
+                        inputEl.value = textToWrite;
+                        inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+                        if (inputId.includes('phone')) {
+                            cleanPhoneInput();
+                        }
                     }
-                    if (callback && typeof callback === 'function') callback();
                 }
             };
-            recognition.start();
+
+            recognition.onerror = () => {
+                if (micBtn) micBtn.classList.remove('recording');
+                activeRecognition = null;
+                activeRecognitionInputId = null;
+            };
+
+            recognition.onend = () => {
+                if (micBtn) micBtn.classList.remove('recording');
+                activeRecognition = null;
+                activeRecognitionInputId = null;
+                if (callback && typeof callback === 'function') callback();
+            };
+
+            try {
+                recognition.start();
+            } catch(e) {
+                if (micBtn) micBtn.classList.remove('recording');
+                activeRecognition = null;
+                activeRecognitionInputId = null;
+            }
         }
 
         function populateUnitsDropdowns() {
@@ -1442,7 +1516,8 @@
             filtered.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
-                const imgHtml = p.image ? `<img src="${p.image}" onclick="enlargeImage('${p.image}')">` : `<i class="fa-solid fa-box"></i>`;
+                const safeName = p.name.replace(/'/g, "\\'");
+                const imgHtml = p.image ? `<img src="${p.image}" onclick="enlargeImage('${p.image}', '${safeName}')">` : `<i class="fa-solid fa-box" onclick="enlargeImage('', '${safeName}')"></i>`;
 
                 card.innerHTML = `
                     <div>
@@ -1563,7 +1638,6 @@
             }
         }
 
-        // تصميم جديد ومنظم ومضغوط لبيانات بطاقة المخزن (التكلفة، البيع، هامش الربح، والكمية في إطار متناسق وشيك)
         function renderInventory() {
             const grid = document.getElementById('inventory-grid-container');
             const query = document.getElementById('inventory-search').value;
@@ -1584,7 +1658,8 @@
             filtered.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
-                const imgHtml = p.image ? `<img src="${p.image}" onclick="enlargeImage('${p.image}')">` : `<i class="fa-solid fa-box"></i>`;
+                const safeName = p.name.replace(/'/g, "\\'");
+                const imgHtml = p.image ? `<img src="${p.image}" onclick="enlargeImage('${p.image}', '${safeName}')">` : `<i class="fa-solid fa-box" onclick="enlargeImage('', '${safeName}')"></i>`;
                 
                 const costVal = parseFloat(p.cost) || 0;
                 const priceVal = parseFloat(p.price) || 0;
@@ -1635,6 +1710,7 @@
             document.getElementById('edit-p-price').value = p.price;
             document.getElementById('edit-p-qty').value = p.qty;
             document.getElementById('edit-p-unit').value = p.unit || 'قطعة';
+            document.getElementById('edit-p-image-file').value = '';
             document.getElementById('edit-product-modal').classList.add('active');
         }
 
@@ -1646,8 +1722,20 @@
             p.price = parseFloat(document.getElementById('edit-p-price').value) || 0;
             p.qty = parseInt(document.getElementById('edit-p-qty').value) || 0;
             p.unit = document.getElementById('edit-p-unit').value;
-            saveData();
-            closeModal('edit-product-modal');
+
+            const fileInput = document.getElementById('edit-p-image-file');
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                convertImageToBase64(fileInput, (imgBase64) => {
+                    if (imgBase64) {
+                        p.image = imgBase64;
+                    }
+                    saveData();
+                    closeModal('edit-product-modal');
+                });
+            } else {
+                saveData();
+                closeModal('edit-product-modal');
+            }
         }
 
         function deleteInventoryProduct(id) {
@@ -1816,6 +1904,16 @@
             const net = Math.max(0, subtotal - discount);
             const paid = parseFloat(document.getElementById('inv-paid-amount').value) || net;
             const remaining = Math.max(0, net - paid);
+
+            currentPreviewData = {
+                client: clientName,
+                phone: clientPhone,
+                date: new Date().toLocaleDateString('ar-EG'),
+                items: currentInvoiceItems,
+                net: net,
+                paid: paid,
+                remaining: remaining
+            };
 
             let itemsRows = currentInvoiceItems.map(i => `
                 <tr>
@@ -2039,6 +2137,17 @@
             closeAllDropdowns();
             const s = sales.find(item => item.id === id);
             if (!s) return;
+            
+            currentPreviewData = {
+                client: s.client,
+                phone: s.phone,
+                date: s.date,
+                items: s.items,
+                net: s.net,
+                paid: s.paid,
+                remaining: s.remaining
+            };
+
             document.getElementById('invoice-preview-title').innerText = "عرض الفاتورة";
             document.getElementById('invoice-preview-actions').style.display = 'flex';
             document.getElementById('invoice-preview-body').innerHTML = `
@@ -2115,6 +2224,16 @@
             closeAllDropdowns();
             const d = debts.find(item => item.id === id);
             if (!d) return;
+
+            currentPreviewData = {
+                client: d.client,
+                phone: d.phone,
+                date: d.date,
+                items: [{ name: d.productName || 'مبيعات آجلة', qty: 1, unit: 'قطعة', total: d.total, price: d.total }],
+                net: d.total,
+                paid: d.paid,
+                remaining: d.remaining
+            };
 
             let paymentsListHtml = (d.payments && d.payments.length > 0) ? d.payments.map(p => `<div style="padding:3px 0; border-bottom:1px dashed #cbd5e1;">تم سداد مبلغ: <b>${p.amount.toFixed(2)} ج.م</b> بتاريخ: ${p.date}</div>`).join('') : '<div>لا توجد دفعات سابقة مسجلة</div>';
 
@@ -2342,30 +2461,129 @@
         }
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-        function enlargeImage(src) { document.getElementById('enlarged-img').src = src; document.getElementById('image-modal').classList.add('active'); }
+        
+        // --- دوال تكبير وحفظ ومشاركة صورة المنتج ---
+        function enlargeImage(src, productName) {
+            currentEnlargedImgSrc = src;
+            currentEnlargedProductName = productName || 'صنف';
+            const imgEl = document.getElementById('enlarged-img');
+            if (src) {
+                imgEl.src = src;
+                imgEl.style.display = 'block';
+            } else {
+                imgEl.src = '';
+                imgEl.style.display = 'none';
+            }
+            document.getElementById('image-modal').classList.add('active');
+        }
+
+        function downloadEnlargedImage() {
+            if (!currentEnlargedImgSrc) {
+                alert('لا توجد صورة محفوظة لهذا الصنف للتحميل');
+                return;
+            }
+            const link = document.createElement('a');
+            link.download = `${currentEnlargedProductName}_${Date.now()}.png`;
+            link.href = currentEnlargedImgSrc;
+            link.click();
+        }
+
+        function shareEnlargedImageWhatsApp() {
+            let msg = `📦 *${storeSettings.storeName}*\n`;
+            msg += `الصنف: *${currentEnlargedProductName}*\n\n`;
+            msg += `مرفق صورة الصنف والطلب 🙏`;
+            let url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
 
         function downloadInvoiceAsImage() {
-            html2canvas(document.getElementById('invoice-preview-body'), { scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `فاتورة_${Date.now()}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+            html2canvas(document.getElementById('invoice-preview-body'), { scale: 2, useCORS: true }).then(canvas => {
+                const dataUrl = canvas.toDataURL('image/png');
+                const win = window.open('', '_blank');
+                if (win) {
+                    win.document.write(`<html><head><title>صورة الفاتورة</title></head><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;"><img src="${dataUrl}" style="max-width:100%;max-height:100%;object-fit:contain;" /></body></html>`);
+                    win.document.close();
+                } else {
+                    document.getElementById('enlarged-img').src = dataUrl;
+                    document.getElementById('image-modal').classList.add('active');
+                }
+            }).catch(err => {
+                alert('حدث خطأ أثناء حفظ الفاتورة كصورة');
+                console.error(err);
             });
         }
 
         function printCurrentPreviewInvoice() {
             const content = document.getElementById('invoice-preview-body').innerHTML;
-            const win = window.open('', '', 'height=600,width=800');
-            win.document.write('<html><head><title>طباعة</title><style>body{font-family:Tajawal,sans-serif;padding:20px;direction:rtl;}</style></head><body>');
-            win.document.write(content);
-            win.document.write('</body></html>');
-            win.document.close();
-            win.focus();
-            setTimeout(() => { win.print(); win.close(); }, 500);
+            let iframe = document.getElementById('print-iframe');
+            if (!iframe) {
+                iframe = document.createElement('iframe');
+                iframe.id = 'print-iframe';
+                iframe.style.position = 'fixed';
+                iframe.style.right = '0';
+                iframe.style.bottom = '0';
+                iframe.style.width = '0';
+                iframe.style.height = '0';
+                iframe.style.border = '0';
+                document.body.appendChild(iframe);
+            }
+
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(`
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>طباعة الفاتورة</title>
+                    <style>
+                        body {
+                            font-family: 'El Messiri', 'Tajawal', sans-serif;
+                            padding: 20px;
+                            direction: rtl;
+                            background: #fff;
+                            color: #000;
+                        }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #cbd5e1; padding: 6px; }
+                    </style>
+                </head>
+                <body>
+                    ${content}
+                </body>
+                </html>
+            `);
+            doc.close();
+
+            iframe.contentWindow.focus();
+            setTimeout(() => {
+                iframe.contentWindow.print();
+            }, 500);
         }
 
         function shareCurrentPreviewWhatsApp() {
-            window.open(`https://wa.me/?text=${encodeURIComponent('فاتورة من ' + storeSettings.storeName)}`, '_blank');
+            if (!currentPreviewData) {
+                window.open(`https://wa.me/?text=${encodeURIComponent('فاتورة من ' + storeSettings.storeName)}`, '_blank');
+                return;
+            }
+            let msg = `🧾 *${storeSettings.storeName}*\n`;
+            msg += `👤 العميل: ${currentPreviewData.client}\n`;
+            msg += `📅 التاريخ: ${currentPreviewData.date}\n\n`;
+            msg += `*الأصناف:* \n`;
+            currentPreviewData.items.forEach(i => {
+                msg += `• ${i.name} (${i.qty} ${i.unit || 'قطعة'}) - ${i.total.toFixed(2)} ج.م\n`;
+            });
+            msg += `\n💰 الصافي المطلوب: *${currentPreviewData.net.toFixed(2)} ج.م*\n`;
+            msg += `💵 المدفوع: ${currentPreviewData.paid.toFixed(2)} ج.م\n`;
+            msg += `📌 المتبقي: ${currentPreviewData.remaining.toFixed(2)} ج.م\n\n`;
+            msg += `شكراً لتعاملكم معنا 🙏`;
+
+            let phone = currentPreviewData.phone ? currentPreviewData.phone.replace(/\s+/g, '').replace(/[^\d+]/g, '') : '';
+            if (phone.startsWith('0')) phone = '2' + phone;
+            else if (!phone.startsWith('2') && phone.length === 10) phone = '20' + phone;
+
+            let url = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
         }
 
         function openSettingsStoreModal() {

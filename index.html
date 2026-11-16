@@ -1203,7 +1203,7 @@
         </div>
     </div>
 
-    <!-- نافذة تكبير الصورة (تم إضافة أزرار حفظ كصورة ومشاركة واتساب) -->
+    <!-- نافذة تكبير الصورة -->
     <div id="image-modal" class="modal" onclick="closeModal('image-modal')">
         <div class="modal-content" style="max-width: 380px; text-align: center;" onclick="event.stopPropagation()">
             <div class="modal-header">
@@ -2462,7 +2462,6 @@
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         
-        // --- دوال تكبير وحفظ ومشاركة صورة المنتج ---
         function enlargeImage(src, productName) {
             currentEnlargedImgSrc = src;
             currentEnlargedProductName = productName || 'صنف';
@@ -2561,29 +2560,52 @@
             }, 500);
         }
 
+        // تم تحديث دالة مشاركة الفاتورة عبر واتساب لتلتقط صورة الفاتورة بالكامل (بالأصناف والختم) ومشاركتها كصورة
         function shareCurrentPreviewWhatsApp() {
-            if (!currentPreviewData) {
+            const previewBody = document.getElementById('invoice-preview-body');
+            if (!previewBody) {
                 window.open(`https://wa.me/?text=${encodeURIComponent('فاتورة من ' + storeSettings.storeName)}`, '_blank');
                 return;
             }
-            let msg = `🧾 *${storeSettings.storeName}*\n`;
-            msg += `👤 العميل: ${currentPreviewData.client}\n`;
-            msg += `📅 التاريخ: ${currentPreviewData.date}\n\n`;
-            msg += `*الأصناف:* \n`;
-            currentPreviewData.items.forEach(i => {
-                msg += `• ${i.name} (${i.qty} ${i.unit || 'قطعة'}) - ${i.total.toFixed(2)} ج.م\n`;
+
+            html2canvas(previewBody, { scale: 2, useCORS: true }).then(canvas => {
+                canvas.toBlob(blob => {
+                    if (!blob) {
+                        alert('تعذر إنشاء صورة الفاتورة');
+                        return;
+                    }
+                    const fileName = `Invoice_${Date.now()}.png`;
+                    const file = new File([blob], fileName, { type: 'image/png' });
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            files: [file],
+                            title: 'فاتورة مبيعات',
+                            text: `فاتورة من ${storeSettings.storeName} للعميل: ${currentPreviewData ? currentPreviewData.client : ''}`
+                        }).catch(err => {
+                            console.log('Share canceled or failed', err);
+                        });
+                    } else {
+                        // Fallback: تحميل الصورة وفتح واتساب بالنص
+                        const link = document.createElement('a');
+                        link.download = fileName;
+                        link.href = URL.createObjectURL(blob);
+                        link.click();
+
+                        if (currentPreviewData) {
+                            let msg = `🧾 *${storeSettings.storeName}*\nمرفق صورة الفاتورة للعميل: ${currentPreviewData.client}\nشكراً لتعاملكم معنا 🙏`;
+                            let phone = currentPreviewData.phone ? currentPreviewData.phone.replace(/\s+/g, '').replace(/[^\d+]/g, '') : '';
+                            if (phone.startsWith('0')) phone = '2' + phone;
+                            else if (!phone.startsWith('2') && phone.length === 10) phone = '20' + phone;
+                            let url = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+                            window.open(url, '_blank');
+                        }
+                    }
+                }, 'image/png');
+            }).catch(err => {
+                alert('حدث خطأ أثناء التقاط صورة الفاتورة');
+                console.error(err);
             });
-            msg += `\n💰 الصافي المطلوب: *${currentPreviewData.net.toFixed(2)} ج.م*\n`;
-            msg += `💵 المدفوع: ${currentPreviewData.paid.toFixed(2)} ج.م\n`;
-            msg += `📌 المتبقي: ${currentPreviewData.remaining.toFixed(2)} ج.م\n\n`;
-            msg += `شكراً لتعاملكم معنا 🙏`;
-
-            let phone = currentPreviewData.phone ? currentPreviewData.phone.replace(/\s+/g, '').replace(/[^\d+]/g, '') : '';
-            if (phone.startsWith('0')) phone = '2' + phone;
-            else if (!phone.startsWith('2') && phone.length === 10) phone = '20' + phone;
-
-            let url = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
         }
 
         function openSettingsStoreModal() {

@@ -1198,7 +1198,8 @@
                 <button type="button" class="btn btn-primary btn-sm" style="flex:1;" onclick="downloadInvoiceAsImage()"><i class="fa-solid fa-image"></i> صورة</button>
                 <button type="button" class="btn btn-success btn-sm" style="flex:1;" onclick="printCurrentPreviewInvoice()"><i class="fa-solid fa-print"></i> طباعة</button>
             </div>
-            <div id="invoice-preview-body" style="background: #fff; padding: 14px; border-radius: 8px; color: #000; margin-bottom: 8px; max-height: 380px; overflow-y: auto;"></div>
+            <!-- تم إزالة max-height و overflow-y من هنا لعرض الفاتورة والختم بكامل محتواها بالأسفل دون قص -->
+            <div id="invoice-preview-body" style="background: #fff; padding: 14px; border-radius: 8px; color: #000; margin-bottom: 8px;"></div>
             <button type="button" id="invoice-save-btn" class="btn btn-success" style="display:none; width:100%;" onclick="saveAndRegisterInvoice()"><i class="fa-solid fa-floppy-disk"></i> اعتماد وحفظ الفاتورة</button>
         </div>
     </div>
@@ -2495,7 +2496,6 @@
             window.open(url, '_blank');
         }
 
-        // تم تعديل دالة تحميل الفاتورة كصورة لالتقاط المحتوى كاملاً بشكل صحيح
         function downloadInvoiceAsImage() {
             const previewBody = document.getElementById('invoice-preview-body');
             if (!previewBody) return;
@@ -2560,7 +2560,6 @@
             }, 500);
         }
 
-        // تم تعديل دالة مشاركة الفاتورة عبر واتساب لالتقاط المحتوى كاملاً (الرأس والختم والأصناف) بدقة
         function shareCurrentPreviewWhatsApp() {
             const previewBody = document.getElementById('invoice-preview-body');
             if (!previewBody) {
@@ -2586,7 +2585,6 @@
                             console.log('Share canceled or failed', err);
                         });
                     } else {
-                        // Fallback: تحميل الصورة وفتح واتساب بالنص
                         const link = document.createElement('a');
                         link.download = fileName;
                         link.href = URL.createObjectURL(blob);

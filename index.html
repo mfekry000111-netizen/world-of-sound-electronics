@@ -2495,17 +2495,17 @@
             window.open(url, '_blank');
         }
 
+        // تم تعديل دالة تحميل الفاتورة كصورة لالتقاط المحتوى كاملاً بشكل صحيح
         function downloadInvoiceAsImage() {
-            html2canvas(document.getElementById('invoice-preview-body'), { scale: 2, useCORS: true }).then(canvas => {
+            const previewBody = document.getElementById('invoice-preview-body');
+            if (!previewBody) return;
+
+            html2canvas(previewBody, { scale: 2, useCORS: true, scrollY: -window.scrollY }).then(canvas => {
                 const dataUrl = canvas.toDataURL('image/png');
-                const win = window.open('', '_blank');
-                if (win) {
-                    win.document.write(`<html><head><title>صورة الفاتورة</title></head><body style="margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;"><img src="${dataUrl}" style="max-width:100%;max-height:100%;object-fit:contain;" /></body></html>`);
-                    win.document.close();
-                } else {
-                    document.getElementById('enlarged-img').src = dataUrl;
-                    document.getElementById('image-modal').classList.add('active');
-                }
+                const link = document.createElement('a');
+                link.download = `Invoice_${Date.now()}.png`;
+                link.href = dataUrl;
+                link.click();
             }).catch(err => {
                 alert('حدث خطأ أثناء حفظ الفاتورة كصورة');
                 console.error(err);
@@ -2560,7 +2560,7 @@
             }, 500);
         }
 
-        // تم تحديث دالة مشاركة الفاتورة عبر واتساب لتلتقط صورة الفاتورة بالكامل (بالأصناف والختم) ومشاركتها كصورة
+        // تم تعديل دالة مشاركة الفاتورة عبر واتساب لالتقاط المحتوى كاملاً (الرأس والختم والأصناف) بدقة
         function shareCurrentPreviewWhatsApp() {
             const previewBody = document.getElementById('invoice-preview-body');
             if (!previewBody) {
@@ -2568,7 +2568,7 @@
                 return;
             }
 
-            html2canvas(previewBody, { scale: 2, useCORS: true }).then(canvas => {
+            html2canvas(previewBody, { scale: 2, useCORS: true, scrollY: -window.scrollY }).then(canvas => {
                 canvas.toBlob(blob => {
                     if (!blob) {
                         alert('تعذر إنشاء صورة الفاتورة');
